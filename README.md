@@ -13,19 +13,20 @@ Just drop the gatling-vtd-<version>.jar into the lib directory.
 ### When using maven Maven
 
 Use the following in you pom.xml :
+
 ``` xml
-    <repository>
-        <id>excilys-thirdparty</id>
-        <name>Excilys Third Party Repository</name>
-        <url>http://repository.excilys.com/content/repositories/thirdparty</url>
-    </repository>
-    <dependencies>
-        <dependency>
-			<groupId>com.excilys.ebi.gatling</groupId>
-			<artifactId>gatling-vtd</artifactId>
-			<version>${gatling-vtd.version}</version>
-        </dependency>
-    </dependencies>
+<repository>
+	<id>excilys-thirdparty</id>
+	<name>Excilys Third Party Repository</name>
+	<url>http://repository.excilys.com/content/repositories/thirdparty</url>
+</repository>
+<dependencies>
+	<dependency>
+		<groupId>com.excilys.ebi.gatling</groupId>
+		<artifactId>gatling-vtd</artifactId>
+		<version>${gatling-vtd.version}</version>
+	</dependency>
+</dependencies>
 ```
 
 ## Step 2 : using in the scripts
