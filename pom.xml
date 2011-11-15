@@ -10,8 +10,8 @@
 
 	<licenses>
 		<license>
-			<name>GPLv3</name>
-			<url>TODO</url>
+			<name>GPLv2</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
