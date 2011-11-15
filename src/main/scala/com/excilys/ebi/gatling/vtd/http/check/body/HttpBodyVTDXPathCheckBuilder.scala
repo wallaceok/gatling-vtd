@@ -16,7 +16,7 @@ object HttpBodyVTDXPathCheckBuilder {
 	 * @param occurrence the occurrence of the XPath expression that should be extracted
 	 * @param expected the value expected
 	 */
-	def vtdxpathEquals(what: Context => String, occurrence: Int, expected: String) = new HttpBodyXPathCheckBuilder((what, occurrence), Some(EMPTY), EqualityCheckStrategy, Some(expected))
+	def vtdXPathEquals(what: Context => String, occurrence: Int, expected: String) = new HttpBodyXPathCheckBuilder((what, occurrence), Some(EMPTY), EqualityCheckStrategy, Some(expected))
 	/**
 	 * Will check if the value extracted via an XPath expression is equal to a specified value
 	 *
@@ -25,7 +25,7 @@ object HttpBodyVTDXPathCheckBuilder {
 	 * @param what a function returning the XPath expression
 	 * @param expected the value expected
 	 */
-	def vtdxpathEquals(what: Context => String, expected: String): HttpBodyXPathCheckBuilder = vtdxpathEquals(what, 0, expected)
+	def vtdXPathEquals(what: Context => String, expected: String): HttpBodyXPathCheckBuilder = vtdXPathEquals(what, 0, expected)
 	/**
 	 * Will check if the value extracted via an XPath expression is equal to a specified value
 	 *
@@ -33,7 +33,7 @@ object HttpBodyVTDXPathCheckBuilder {
 	 * @param occurrence the occurrence of the XPath expression that should be extracted
 	 * @param expected the value expected
 	 */
-	def vtdxpathEquals(expression: String, occurrence: Int, expected: String): HttpBodyXPathCheckBuilder = vtdxpathEquals(((c: Context) => expression), occurrence, expected)
+	def vtdXPathEquals(expression: String, occurrence: Int, expected: String): HttpBodyXPathCheckBuilder = vtdXPathEquals(((c: Context) => expression), occurrence, expected)
 	/**
 	 * Will check if the value extracted via an XPath expression is equal to a specified value
 	 *
@@ -42,7 +42,7 @@ object HttpBodyVTDXPathCheckBuilder {
 	 * @param expression the XPath expression
 	 * @param expected the value expected
 	 */
-	def vtdxpathEquals(expression: String, expected: String): HttpBodyXPathCheckBuilder = vtdxpathEquals((c: Context) => expression, expected)
+	def vtdXPathEquals(expression: String, expected: String): HttpBodyXPathCheckBuilder = vtdXPathEquals((c: Context) => expression, expected)
 
 	/**
 	 * Will check if the value extracted via an XPath expression is different from a specified value
