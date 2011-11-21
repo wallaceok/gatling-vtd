@@ -33,6 +33,6 @@ import com.excilys.ebi.gatling.vtd.http.check.body.extractor.HttpBodyVTDXPathExt
  *
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
-class HttpBodyVTDXPathCheck(what: (Context => String, Int), to: Option[String], strategy: CheckStrategy, expected: Option[String])
-		extends HttpCheck(what._1, new HttpBodyVTDXPathExtractorFactory(what._2), to, strategy, expected, CompletePageReceived) {
+class HttpBodyVTDXPathCheck(what: Context => String, occurrence: Int, strategy: CheckStrategy, expected: Option[String], saveAs: Option[String])
+		extends HttpCheck(what, new HttpBodyVTDXPathExtractorFactory(occurrence), strategy, expected, saveAs, CompletePageReceived) {
 }
