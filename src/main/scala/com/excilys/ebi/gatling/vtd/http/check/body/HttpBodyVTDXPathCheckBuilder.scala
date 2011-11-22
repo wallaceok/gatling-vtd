@@ -17,10 +17,11 @@
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
 
-import com.excilys.ebi.gatling.core.check.strategy.{ ExistenceCheckStrategy, CheckStrategy }
+import com.excilys.ebi.gatling.core.check.strategy.{ExistenceCheckStrategy, CheckStrategy}
 import com.excilys.ebi.gatling.core.context.Context
+import com.excilys.ebi.gatling.core.util.StringHelper.interpolate
 import com.excilys.ebi.gatling.http.check.HttpCheckBuilder
-import com.excilys.ebi.gatling.http.request.HttpPhase.{ HttpPhase, CompletePageReceived }
+import com.excilys.ebi.gatling.http.request.HttpPhase.{HttpPhase, CompletePageReceived}
 
 /**
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
@@ -30,11 +31,11 @@ object HttpBodyVTDXPathCheckBuilder {
 	/**
 	 *
 	 */
-	def xpath(what: Context => String) = new HttpBodyVTDXPathCheckBuilder(what, None, ExistenceCheckStrategy, None, None)
+	def vtdXpath(what: Context => String) = new HttpBodyVTDXPathCheckBuilder(what, None, ExistenceCheckStrategy, None, None)
 	/**
 	 *
 	 */
-	def xpath(expression: String): HttpBodyVTDXPathCheckBuilder = xpath((c: Context) => expression)
+	def vtdXpath(expression: String): HttpBodyVTDXPathCheckBuilder = vtdXpath(interpolate(expression))
 }
 
 /**
