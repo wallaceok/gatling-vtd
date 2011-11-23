@@ -22,20 +22,22 @@ import com.excilys.ebi.gatling.core.context.Context
 import com.excilys.ebi.gatling.core.util.StringHelper.interpolate
 import com.excilys.ebi.gatling.http.check.HttpCheckBuilder
 import com.excilys.ebi.gatling.http.request.HttpPhase.{HttpPhase, CompletePageReceived}
+import com.excilys.ebi.gatling.core.check.CheckBuilderSave
+import com.excilys.ebi.gatling.core.check.CheckBuilderVerify
+import com.excilys.ebi.gatling.core.check.CheckBuilderFind
 
 /**
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
 object HttpBodyVTDXPathCheckBuilder {
-
 	/**
 	 *
 	 */
-	def vtdXpath(what: Context => String) = new HttpBodyVTDXPathCheckBuilder(what, None, ExistenceCheckStrategy, None, None)
+	def vtdXpath(what: Context => String) = new HttpBodyVTDXPathCheckBuilder(what, None, ExistenceCheckStrategy, None, None) with CheckBuilderFind[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
 	/**
 	 *
 	 */
-	def vtdXpath(expression: String): HttpBodyVTDXPathCheckBuilder = vtdXpath(interpolate(expression))
+	def vtdXpath(expression: String): HttpBodyVTDXPathCheckBuilder with CheckBuilderFind[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]] = vtdXpath(interpolate(expression))
 }
 
 /**
@@ -45,14 +47,18 @@ object HttpBodyVTDXPathCheckBuilder {
  * @param to the optional context key in which the extracted value will be stored
  * @param strategy the strategy used to check
  * @param expected the expected value against which the extracted value will be checked
- *
- * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
 class HttpBodyVTDXPathCheckBuilder(what: Context => String, occurrence: Option[Int], strategy: CheckStrategy, expected: Option[String], saveAs: Option[String])
 		extends HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder](what, occurrence, strategy, expected, saveAs, CompletePageReceived) {
 
 	def newInstance(what: Context => String, occurrence: Option[Int], strategy: CheckStrategy, expected: Option[String], saveAs: Option[String], when: HttpPhase) =
 		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs)
+
+	def newInstanceWithFind(occurrence: Int): HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder] with CheckBuilderVerify[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]] =
+		new HttpBodyVTDXPathCheckBuilder(what, Some(occurrence), strategy, expected, saveAs) with CheckBuilderVerify[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
+
+	def newInstanceWithVerify(strategy: CheckStrategy, expected: Option[String] = None): HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder] with CheckBuilderSave[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]] =
+		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs) with CheckBuilderSave[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
 
 	def build = new HttpBodyVTDXPathCheck(what, occurrence.getOrElse(0), strategy, expected, saveAs)
 }
