@@ -1634,9 +1634,9 @@ public class CustomVTDGen extends VTDGen {
 			this.parse(ns); // set namespace awareness to true
 			return true;
 		} catch (java.io.IOException e) {
-			System.out.println("IOException: " + e);
+			throw new RuntimeException(e);
 		} catch (ParseException e) {
-			System.out.println("ParserException: " + e);
+			throw new RuntimeException(e);
 		} finally {
 			if (fis != null) {
 				try {
@@ -1645,7 +1645,6 @@ public class CustomVTDGen extends VTDGen {
 				}
 			}
 		}
-		return false;
 	}
 
 	/**
@@ -1673,13 +1672,11 @@ public class CustomVTDGen extends VTDGen {
 			this.parse(ns);
 			return true;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (ParseException e) {
-			System.out.println("ParserException: " + e);
+			throw new RuntimeException(e);
 		} finally {
 			if (fis != null) {
 				try {
@@ -1688,7 +1685,6 @@ public class CustomVTDGen extends VTDGen {
 				}
 			}
 		}
-		return false;
 	}
 
 	/**
@@ -1719,13 +1715,11 @@ public class CustomVTDGen extends VTDGen {
 			this.parse(ns);
 			return true;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (ParseException e) {
-			System.out.println("ParserException: " + e);
+			throw new RuntimeException(e);
 		} finally {
 			if (zf != null) {
 				try {
@@ -1734,7 +1728,6 @@ public class CustomVTDGen extends VTDGen {
 				}
 			}
 		}
-		return false;
 	}
 
 	/**
