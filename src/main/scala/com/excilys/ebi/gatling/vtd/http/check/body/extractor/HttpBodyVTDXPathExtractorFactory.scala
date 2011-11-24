@@ -18,12 +18,16 @@
 package com.excilys.ebi.gatling.vtd.http.check.body.extractor
 import com.excilys.ebi.gatling.core.check.extractor.ExtractorFactory
 import com.excilys.ebi.gatling.vtd.check.extractor.VTDXPathExtractor
+import com.excilys.ebi.gatling.vtd.check.extractor.MultiVTDXPathExtractor
 import com.ning.http.client.Response
 
-class HttpBodyVTDXPathExtractorFactory(occurence: Int) extends ExtractorFactory[Response] {
+class HttpBodyVTDXPathExtractorFactory(occurence: Option[Int]) extends ExtractorFactory[Response] {
 
 	def getExtractor(response: Response) = {
-		logger.debug("Instantiation of VTDXPathExtractor")
-		new VTDXPathExtractor(response.getResponseBodyAsBytes, occurence)
+		occurence.map { value =>
+			new VTDXPathExtractor(response.getResponseBodyAsBytes, value)
+		}.getOrElse {
+			new MultiVTDXPathExtractor(response.getResponseBodyAsBytes)
+		}
 	}
 }
