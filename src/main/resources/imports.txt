@@ -1,0 +1,1 @@
+import com.excilys.ebi.gatling.vtd.http.check.body.HttpBodyVTDXPathCheckBuilder._

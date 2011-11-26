@@ -31,13 +31,14 @@ Use the following in you pom.xml :
 
 ## Step 2 : using in the scripts
 
-Add the following line into your script :
+If you use the txt format, the required imports are automatically registered.
+If you use the scala format, add the following import :
 
     import com.excilys.ebi.gatling.vtd.http.check.body.HttpBodyVTDXPathCheckBuilder._
 
 This will let you use the new extractor builtins. The syntax is similar to the standard XPath one, just replace the prefix "xpath" with "vtdXPath". For example :
 
-    capture(vtdXPath("//input[@id='text1']/@value") in "aaaa_value")
+    capture(vtdXPath("//input[@id='text1']/@value") saveAs "aaaa_value")
 
 # Important notice : licence
 
