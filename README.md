@@ -8,7 +8,7 @@ VTD-XML is a XPath 1.0 implementation that is much more faster than the standard
 ## Step 1 : adding the dependency
 ### When using the Gatling bundle
 
-Just drop the gatling-vtd-<version>.jar into the lib directory.
+Just drop the gatling-vtd-&lt;version&gt;.jar into the lib directory.
 
 ### When using maven Maven
 
