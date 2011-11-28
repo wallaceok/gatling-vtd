@@ -206,6 +206,9 @@
 				<artifactId>maven-license-plugin</artifactId>
 				<configuration>
 					<header>src/etc/header.txt</header>
+					<excludes>
+						<exclude>**/imports.txt</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
