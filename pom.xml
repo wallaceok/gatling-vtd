@@ -33,12 +33,12 @@
 		<developer>
 			<id>slandelle@excilys.com</id>
 			<name>Stephane Landelle</name>
-			<organization>Excilys</organization>
+			<organization>eBusiness Information, Excilys Group</organization>
 		</developer>
 		<developer>
 			<id>rsertelon@excilys.com</id>
 			<name>Romain Sertelon</name>
-			<organization>Excilys</organization>
+			<organization>eBusiness Information, Excilys Group</organization>
 		</developer>
 	</developers>
 
@@ -64,7 +64,6 @@
 		<maven-scala-plugin.version>2.15.2</maven-scala-plugin.version>
 		<maven-surefire-plugin.version>2.10</maven-surefire-plugin.version>
 		<maven-release-plugin.version>2.2.1</maven-release-plugin.version>
-		<maven-scalate-plugin.version>1.5.2</maven-scalate-plugin.version>
 		<maven-licence-plugin.version>1.9.0</maven-licence-plugin.version>
 	</properties>
 
