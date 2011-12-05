@@ -18,7 +18,7 @@
 package com.excilys.ebi.gatling.vtd.http.check.body
 
 import com.excilys.ebi.gatling.core.check.strategy.{ExistenceCheckStrategy, CheckStrategy}
-import com.excilys.ebi.gatling.core.context.Context
+import com.excilys.ebi.gatling.core.session.Session
 import com.excilys.ebi.gatling.core.util.StringHelper.interpolate
 import com.excilys.ebi.gatling.http.check.HttpCheckBuilder
 import com.excilys.ebi.gatling.http.request.HttpPhase.{HttpPhase, CompletePageReceived}
@@ -35,7 +35,7 @@ object HttpBodyVTDXPathCheckBuilder {
 	/**
 	 *
 	 */
-	def vtdXpath(what: Context => String) = new HttpBodyVTDXPathCheckBuilder(what, Some(0), ExistenceCheckStrategy, Nil, None) with CheckBuilderFind[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
+	def vtdXpath(what: Session => String) = new HttpBodyVTDXPathCheckBuilder(what, Some(0), ExistenceCheckStrategy, Nil, None) with CheckBuilderFind[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
 	/**
 	 *
 	 */
@@ -50,10 +50,10 @@ object HttpBodyVTDXPathCheckBuilder {
  * @param strategy the strategy used to check
  * @param expected the expected value against which the extracted value will be checked
  */
-class HttpBodyVTDXPathCheckBuilder(what: Context => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[String], saveAs: Option[String])
+class HttpBodyVTDXPathCheckBuilder(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[String], saveAs: Option[String])
 		extends HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder](what, occurrence, strategy, expected, saveAs, CompletePageReceived) {
 
-	def newInstance(what: Context => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[String], saveAs: Option[String], when: HttpPhase) =
+	def newInstance(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[String], saveAs: Option[String], when: HttpPhase) =
 		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs)
 
 	def newInstanceWithFindOne(occurrence: Int) =
