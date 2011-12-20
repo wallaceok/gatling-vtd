@@ -17,8 +17,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com/excilys/gatling-vtd.git</connection>
-		<developerConnection>scm:git@github.com:excilys/gatling-vtd.git</developerConnection>
+		<connection>scm:git:git:@github.com:excilys/gatling-vtd.git</connection>
+		<developerConnection>scm:git:git:@github.com:excilys/gatling-vtd.git</developerConnection>
 		<url>https://github.com/excilys/gatling-vtd</url>
 	</scm>
 
