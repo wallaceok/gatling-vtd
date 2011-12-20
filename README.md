@@ -16,13 +16,13 @@ Use the following in you pom.xml :
 
 ``` xml
 <repository>
-	<id>excilys-thirdparty</id>
-	<name>Excilys Third Party Repository</name>
-	<url>http://repository.excilys.com/content/repositories/thirdparty</url>
+	<id>excilys</id>
+	<name>Excilys Repository</name>
+	<url>http://repository.excilys.com/content/groups/public</url>
 </repository>
 <dependencies>
 	<dependency>
-		<groupId>com.excilys.ebi.gatling</groupId>
+		<groupId>com.excilys.ebi.gatling.vtd</groupId>
 		<artifactId>gatling-vtd</artifactId>
 		<version>${gatling-vtd.version}</version>
 	</dependency>
@@ -42,7 +42,7 @@ This will let you use the new extractor builtins. The syntax is similar to the s
 
 # Important notice : licence
 
-VTD-XML use a dual GPLv3/commercial licence.
+VTD-XML use a dual GPLv2/commercial licence.
 
 This is the reason why gatling-vtd is a separate project licenced under GPLv2 instead of being integrated into core Gatling, that is Apache 2 licenced.
 
