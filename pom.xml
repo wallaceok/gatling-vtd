@@ -55,7 +55,7 @@
 		<encoding>UTF-8</encoding>
 		<scala.version>2.9.1</scala.version>
 
-		<gatling.version>1.0.0</gatling.version>
+		<gatling.version>1.0.1-SNAPSHOT</gatling.version>
 		<vtd.version>2.10</vtd.version>
 
 		<maven-assembly-plugin.version>2.2.1</maven-assembly-plugin.version>
