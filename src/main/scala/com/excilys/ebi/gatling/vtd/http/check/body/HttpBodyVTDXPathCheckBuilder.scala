@@ -17,11 +17,11 @@
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
 
-import com.excilys.ebi.gatling.core.check.strategy.{ExistenceCheckStrategy, CheckStrategy}
+import com.excilys.ebi.gatling.core.check.strategy.{ ExistenceCheckStrategy, CheckStrategy }
 import com.excilys.ebi.gatling.core.session.Session
 import com.excilys.ebi.gatling.core.util.StringHelper.interpolate
 import com.excilys.ebi.gatling.http.check.HttpCheckBuilder
-import com.excilys.ebi.gatling.http.request.HttpPhase.{HttpPhase, CompletePageReceived}
+import com.excilys.ebi.gatling.http.request.HttpPhase.{ HttpPhase, CompletePageReceived }
 import com.excilys.ebi.gatling.core.check.CheckBuilderSave
 import com.excilys.ebi.gatling.core.check.CheckBuilderVerify
 import com.excilys.ebi.gatling.core.check.CheckBuilderFind
@@ -50,10 +50,10 @@ object HttpBodyVTDXPathCheckBuilder {
  * @param strategy the strategy used to check
  * @param expected the expected value against which the extracted value will be checked
  */
-class HttpBodyVTDXPathCheckBuilder(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[String], saveAs: Option[String])
+class HttpBodyVTDXPathCheckBuilder(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[Session => String], saveAs: Option[String])
 		extends HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder](what, occurrence, strategy, expected, saveAs, CompletePageReceived) {
 
-	def newInstance(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[String], saveAs: Option[String], when: HttpPhase) =
+	def newInstance(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[Session => String], saveAs: Option[String], when: HttpPhase) =
 		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs)
 
 	def newInstanceWithFindOne(occurrence: Int) =
@@ -62,7 +62,7 @@ class HttpBodyVTDXPathCheckBuilder(what: Session => String, occurrence: Option[I
 	def newInstanceWithFindAll =
 		new HttpBodyVTDXPathCheckBuilder(what, None, strategy, expected, saveAs) with CheckBuilderVerifyAll[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
 
-	def newInstanceWithVerify(strategy: CheckStrategy, expected: List[String] = Nil) =
+	def newInstanceWithVerify(strategy: CheckStrategy, expected: List[Session => String] = Nil) =
 		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs) with CheckBuilderSave[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
 
 	def build = new HttpBodyVTDXPathCheck(what, occurrence, strategy, expected, saveAs)
