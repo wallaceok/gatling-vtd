@@ -17,7 +17,6 @@
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
 
-import com.excilys.ebi.gatling.core.check.strategy.CheckStrategy
 import com.excilys.ebi.gatling.core.session.Session
 import com.excilys.ebi.gatling.http.check.HttpCheck
 import com.excilys.ebi.gatling.http.request.HttpPhase.CompletePageReceived
@@ -33,6 +32,6 @@ import com.excilys.ebi.gatling.vtd.http.check.body.extractor.HttpBodyVTDXPathExt
  *
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
-class HttpBodyVTDXPathCheck(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[Session => String], saveAs: Option[String])
+class HttpBodyVTDXPathCheck(what: Session => String, occurrence: Option[Int], strategy: (List[String], List[String]) => Boolean, expected: List[Session => String], saveAs: Option[String])
 		extends HttpCheck(what, new HttpBodyVTDXPathExtractorFactory(occurrence), strategy, expected, saveAs, CompletePageReceived) {
 }
