@@ -18,9 +18,7 @@
 package com.excilys.ebi.gatling.vtd.check.extractor
 import com.excilys.ebi.gatling.core.check.extractor.Extractor
 import com.excilys.ebi.gatling.core.util.StringHelper.EMPTY
-import com.ximpleware.{ CustomVTDGen, AutoPilot }
-import com.excilys.ebi.gatling.core.check.extractor.MultiValuedExtractor
-
+import com.ximpleware.{ VTDNav, AutoPilot }
 /**
  * VTD-XML based XPath Extractor.
  *
@@ -28,7 +26,7 @@ import com.excilys.ebi.gatling.core.check.extractor.MultiValuedExtractor
  *
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
-class MultiVTDXPathExtractor(xmlContent: Array[Byte]) extends AbstractVTDXPathExtractor(xmlContent) with MultiValuedExtractor {
+class MultiVTDXPathExtractor(vn: VTDNav, ap: AutoPilot) extends AbstractVTDXPathExtractor[List[String]](vn, ap) with Extractor[List[String]] {
 
 	def doExtract = {
 		var index = -1;

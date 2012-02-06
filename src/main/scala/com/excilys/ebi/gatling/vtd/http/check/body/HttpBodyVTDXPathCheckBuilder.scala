@@ -16,54 +16,57 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
-
+import com.excilys.ebi.gatling.core.check.CheckContext.{ setAndReturnCheckContextAttribute, getCheckContextAttribute }
+import com.excilys.ebi.gatling.core.check.extractor.ExtractorFactory
+import com.excilys.ebi.gatling.core.check.{ CheckOneBuilder, CheckMultipleBuilder }
 import com.excilys.ebi.gatling.core.session.Session
-import com.excilys.ebi.gatling.core.util.StringHelper.interpolate
-import com.excilys.ebi.gatling.http.check.HttpCheckBuilder
-import com.excilys.ebi.gatling.http.request.HttpPhase.{ HttpPhase, CompletePageReceived }
-import com.excilys.ebi.gatling.core.check.CheckBuilderSave
-import com.excilys.ebi.gatling.core.check.CheckBuilderVerify
-import com.excilys.ebi.gatling.core.check.CheckBuilderFind
-import com.excilys.ebi.gatling.core.check.CheckBuilderVerifyAll
-import com.excilys.ebi.gatling.core.check.CheckBuilderVerifyOne
-import com.excilys.ebi.gatling.core.check.CheckStrategy
+import com.excilys.ebi.gatling.http.check.HttpMultipleCheckBuilder
+import com.excilys.ebi.gatling.http.request.HttpPhase.CompletePageReceived
+import com.excilys.ebi.gatling.vtd.check.extractor.{ VTDXPathExtractor, MultiVTDXPathExtractor }
+import com.ning.http.client.Response
+import com.ximpleware.{ VTDNav, CustomVTDGen, AutoPilot }
 
-/**
- * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
- */
+import HttpBodyVTDXPathCheckBuilder.HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY
+
 object HttpBodyVTDXPathCheckBuilder {
-	/**
-	 *
-	 */
-	def vtdXpath(what: Session => String) = new HttpBodyVTDXPathCheckBuilder(what, Some(0), CheckBuilderVerify.exists, Nil, None) with CheckBuilderFind[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
-	/**
-	 *
-	 */
-	def vtdXpath(expression: String): HttpBodyVTDXPathCheckBuilder with CheckBuilderFind[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]] = vtdXpath(interpolate(expression))
+
+	val HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY = "httpResponseBodyVtd"
+
+	def vtdXpath(what: Session => String) = new HttpBodyVTDXPathCheckBuilder(what)
 }
 
 /**
- * This class builds a response body check based on XPath expressions
+ * This class builds a response body check based on regular expressions
  *
  * @param what the function returning the expression representing what is to be checked
- * @param to the optional context key in which the extracted value will be stored
  * @param strategy the strategy used to check
  * @param expected the expected value against which the extracted value will be checked
+ * @param saveAs the optional session key in which the extracted value will be stored
  */
-class HttpBodyVTDXPathCheckBuilder(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[Session => String], saveAs: Option[String])
-		extends HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder](what, occurrence, strategy, expected, saveAs, CompletePageReceived) {
+class HttpBodyVTDXPathCheckBuilder(what: Session => String) extends HttpMultipleCheckBuilder[String](what, CompletePageReceived) {
 
-	def newInstance(what: Session => String, occurrence: Option[Int], strategy: CheckStrategy, expected: List[Session => String], saveAs: Option[String], when: HttpPhase) =
-		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs)
+	def find = find(0)
 
-	def newInstanceWithFindOne(occurrence: Int) =
-		new HttpBodyVTDXPathCheckBuilder(what, Some(occurrence), strategy, expected, saveAs) with CheckBuilderVerifyOne[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
+	def getVtdResources(response: Response) = getCheckContextAttribute(HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY).getOrElse {
+		val vtdEngine = new CustomVTDGen
+		vtdEngine.setDoc(response.getResponseBodyAsBytes)
+		vtdEngine.parse(false)
+		val vn: VTDNav = vtdEngine.getNav
+		val ap: AutoPilot = new AutoPilot(vn)
+		setAndReturnCheckContextAttribute(HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY, (vn, ap))
+	}
 
-	def newInstanceWithFindAll =
-		new HttpBodyVTDXPathCheckBuilder(what, None, strategy, expected, saveAs) with CheckBuilderVerifyAll[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
+	def find(occurence: Int) = new CheckOneBuilder(checkBuildFunction[String], new ExtractorFactory[Response, String] {
+		def getExtractor(response: Response) = {
+			val (vn, ap) = getVtdResources(response)
+			new VTDXPathExtractor(vn, ap, occurence)
+		}
+	})
 
-	def newInstanceWithVerify(strategy: CheckStrategy, expected: List[Session => String] = Nil) =
-		new HttpBodyVTDXPathCheckBuilder(what, occurrence, strategy, expected, saveAs) with CheckBuilderSave[HttpCheckBuilder[HttpBodyVTDXPathCheckBuilder]]
-
-	def build = new HttpBodyVTDXPathCheck(what, occurrence, strategy, expected, saveAs)
+	def findAll = new CheckMultipleBuilder(checkBuildFunction[List[String]], new ExtractorFactory[Response, List[String]] {
+		def getExtractor(response: Response) = {
+			val (vn, ap) = getVtdResources(response)
+			new MultiVTDXPathExtractor(vn, ap)
+		}
+	})
 }

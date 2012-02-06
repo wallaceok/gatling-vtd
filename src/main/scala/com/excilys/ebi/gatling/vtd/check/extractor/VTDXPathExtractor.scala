@@ -16,7 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package com.excilys.ebi.gatling.vtd.check.extractor
+
+import com.excilys.ebi.gatling.core.check.extractor.Extractor
 import com.excilys.ebi.gatling.core.util.StringHelper.EMPTY
+import com.ximpleware.VTDNav
+import com.ximpleware.AutoPilot
 
 /**
  * VTD-XML based XPath Extractor.
@@ -25,7 +29,7 @@ import com.excilys.ebi.gatling.core.util.StringHelper.EMPTY
  *
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
-class VTDXPathExtractor(xmlContent: Array[Byte], occurrence: Int) extends AbstractVTDXPathExtractor(xmlContent) {
+class VTDXPathExtractor(vn: VTDNav, ap: AutoPilot, occurrence: Int) extends AbstractVTDXPathExtractor[String](vn, ap) with Extractor[String] {
 
 	def doExtract = {
 
@@ -41,13 +45,9 @@ class VTDXPathExtractor(xmlContent: Array[Byte], occurrence: Int) extends Abstra
 		} while (count < occurrence && index != -1)
 
 		if (count < occurrence || index == -1) {
-			Nil
+			None
 		} else {
-			val result = vn.toString(index)
-			if (result.equals(EMPTY))
-				Nil
-			else
-				List(result)
+			vn.toString(index)
 		}
 	}
 }
