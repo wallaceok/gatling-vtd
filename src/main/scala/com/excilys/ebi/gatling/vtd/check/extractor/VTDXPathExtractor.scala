@@ -17,37 +17,86 @@
  */
 package com.excilys.ebi.gatling.vtd.check.extractor
 
-import com.excilys.ebi.gatling.core.check.extractor.Extractor
+import com.excilys.ebi.gatling.core.check.extractor.Extractor.{ toOption, listToOption }
 import com.excilys.ebi.gatling.core.util.StringHelper.EMPTY
-import com.ximpleware.VTDNav
-import com.ximpleware.AutoPilot
+import com.ximpleware.VTDNav.{ TOKEN_STARTING_TAG, TOKEN_PI_VAL, TOKEN_PI_NAME, TOKEN_ATTR_NAME }
+import com.ximpleware.{ VTDNav, CustomVTDGen, AutoPilot }
 
 /**
  * VTD-XML based XPath Extractor.
  *
- * Byte Array parsing is optimized as it only happens once so that the Extractor can be reused for multiple XPath expressions on the same targe.
+ * Byte Array parsing is optimized as it only happens once so that the Extractor can be reused for multiple XPath expressions on the same target.
  *
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
-class VTDXPathExtractor(vn: VTDNav, ap: AutoPilot, occurrence: Int) extends AbstractVTDXPathExtractor[String](vn, ap) with Extractor[String] {
+class VTDXPathExtractor(bytes: Array[Byte]) {
 
-	def doExtract = {
+	val vtdEngine = new CustomVTDGen
+	vtdEngine.setDoc(bytes)
+	vtdEngine.parse(false)
+	val vn: VTDNav = vtdEngine.getNav
+	val ap: AutoPilot = new AutoPilot(vn)
 
-		var count = 0
-		var index = -1;
-		do {
-			index = ap.evalXPath();
-			count += 1
-
-			if (index != -1) {
-				index = getTextIndex(index, vn)
+	private def getTextIndex(index: Int, vn: VTDNav) = {
+		vn.getTokenType(index) match {
+			case TOKEN_ATTR_NAME => index + 1
+			case TOKEN_STARTING_TAG => vn.getText
+			case TOKEN_PI_NAME => {
+				if (index + 1 < vn.getTokenCount && vn.getTokenType(index + 1) == TOKEN_PI_VAL)
+					index + 1;
+				else
+					index - 1;
 			}
-		} while (count < occurrence && index != -1)
-
-		if (count < occurrence || index == -1) {
-			None
-		} else {
-			vn.toString(index)
+			case x => throw new IllegalArgumentException("Unknown token type " + x)
 		}
 	}
+
+	private def xpath[X](expression: String)(f: => X) = {
+		ap.selectXPath(expression)
+		val values = f
+		ap.resetXPath
+		values
+	}
+
+	def extractOne(occurrence: Int)(expression: String): Option[String] = {
+		xpath(expression) {
+			var count = 0
+			var index = -1
+			do {
+				index = ap.evalXPath
+				count += 1
+
+				if (index != -1) {
+					index = getTextIndex(index, vn)
+				}
+			} while (count < occurrence && index != -1)
+
+			if (count < occurrence || index == -1) {
+				None
+			} else {
+				vn.toString(index)
+			}
+		}
+	}
+
+	def extractMultiple(expression: String): Option[List[String]] = {
+		xpath(expression) {
+			var index = -1
+			var values: List[String] = Nil
+			do {
+				index = ap.evalXPath
+
+				if (index != -1) {
+					index = getTextIndex(index, vn)
+
+					val result = vn.toString(index)
+					if (!result.equals(EMPTY))
+						values = result :: values
+				}
+			} while (index != -1)
+			values
+		}
+	}
+
+	def count(expression: String): Option[Int] = extractMultiple(expression).getOrElse(Nil).size
 }

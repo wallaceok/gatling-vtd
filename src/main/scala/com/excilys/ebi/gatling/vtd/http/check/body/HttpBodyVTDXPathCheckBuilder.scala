@@ -16,65 +16,40 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
-import com.excilys.ebi.gatling.core.check.CheckContext.{setAndReturnCheckContextAttribute, getCheckContextAttribute}
-import com.excilys.ebi.gatling.core.check.extractor.ExtractorFactory
-import com.excilys.ebi.gatling.core.check.extractor.TransformerExtractor
-import com.excilys.ebi.gatling.core.check.{CheckOneBuilder, CheckMultipleBuilder}
+
+import com.excilys.ebi.gatling.core.check.CheckContext.{ setAndReturnCheckContextAttribute, getCheckContextAttribute }
+import com.excilys.ebi.gatling.core.check.{ CheckOneBuilder, CheckMultipleBuilder }
 import com.excilys.ebi.gatling.core.session.Session
 import com.excilys.ebi.gatling.http.check.HttpMultipleCheckBuilder
 import com.excilys.ebi.gatling.http.request.HttpPhase.CompletePageReceived
-import com.excilys.ebi.gatling.vtd.check.extractor.{VTDXPathExtractor, MultiVTDXPathExtractor}
+import com.excilys.ebi.gatling.vtd.check.extractor.VTDXPathExtractor
 import com.ning.http.client.Response
-import com.ximpleware.{VTDNav, CustomVTDGen, AutoPilot}
 
-import HttpBodyVTDXPathCheckBuilder.HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY
+import HttpBodyVTDXPathCheckBuilder.HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY
 
 object HttpBodyVTDXPathCheckBuilder {
 
-	val HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY = "httpResponseBodyVtd"
+	val HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY = "HttpBodyVTDXPathExtractor"
 
-	def vtdXpath(what: Session => String) = new HttpBodyVTDXPathCheckBuilder(what)
+	def vtdXpath(expression: Session => String) = new HttpBodyVTDXPathCheckBuilder(expression)
 }
 
 /**
  * This class builds a response body check based on regular expressions
  *
- * @param what the function returning the expression representing what is to be checked
- * @param strategy the strategy used to check
- * @param expected the expected value against which the extracted value will be checked
- * @param saveAs the optional session key in which the extracted value will be stored
+ * @param expression the function returning the expression representing expression is to be checked
  */
-class HttpBodyVTDXPathCheckBuilder(what: Session => String) extends HttpMultipleCheckBuilder[String](what, CompletePageReceived) {
+class HttpBodyVTDXPathCheckBuilder(expression: Session => String) extends HttpMultipleCheckBuilder[String](expression, CompletePageReceived) {
 
 	def find = find(0)
 
-	def getVtdResources(response: Response) = getCheckContextAttribute(HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY).getOrElse {
-		val vtdEngine = new CustomVTDGen
-		vtdEngine.setDoc(response.getResponseBodyAsBytes)
-		vtdEngine.parse(false)
-		val vn: VTDNav = vtdEngine.getNav
-		val ap: AutoPilot = new AutoPilot(vn)
-		setAndReturnCheckContextAttribute(HTTP_RESPONSE_BODY_VTD_CHECK_CONTEXT_KEY, (vn, ap))
+	def getCachedExtractor(response: Response) = getCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY).getOrElse {
+		setAndReturnCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, new VTDXPathExtractor(response.getResponseBodyAsBytes))
 	}
 
-	def find(occurence: Int) = new CheckOneBuilder(checkBuildFunction[String], new ExtractorFactory[Response, String] {
-		def getExtractor(response: Response) = {
-			val (vn, ap) = getVtdResources(response)
-			new VTDXPathExtractor(vn, ap, occurence)
-		}
-	})
+	def find(occurrence: Int) = new CheckOneBuilder(checkBuildFunction, (response: Response) => getCachedExtractor(response).extractOne(occurrence))
 
-	def findAll = new CheckMultipleBuilder(checkBuildFunction[List[String]], new ExtractorFactory[Response, List[String]] {
-		def getExtractor(response: Response) = {
-			val (vn, ap) = getVtdResources(response)
-			new MultiVTDXPathExtractor(vn, ap)
-		}
-	})
+	def findAll = new CheckMultipleBuilder(checkBuildFunction, (response: Response) => getCachedExtractor(response).extractMultiple)
 
-	def count = new CheckOneBuilder(checkBuildFunction[Int], new ExtractorFactory[Response, Int] {
-		def getExtractor(response: Response) = {
-			val (vn, ap) = getVtdResources(response)
-			new TransformerExtractor(new MultiVTDXPathExtractor(vn, ap), (list: List[_]) => list.size)
-		}
-	})
+	def count = new CheckOneBuilder(checkBuildFunction, (response: Response) => getCachedExtractor(response).count)
 }
