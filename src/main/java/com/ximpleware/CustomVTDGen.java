@@ -217,12 +217,6 @@ public class CustomVTDGen extends VTDGen {
 			singleByteEncoding = false;
 	}
 
-	public static void main(String[] args) {
-
-		System.out.println(ENTITIES.getString("Eacute"));
-		System.out.println(ENTITIES.getString("toto"));
-	}
-
 	/**
 	 * This method will detect whether the entity is valid or not and increment
 	 * offset.

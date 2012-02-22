@@ -18,13 +18,13 @@
 package com.excilys.ebi.gatling.vtd.http.check.body
 import com.excilys.ebi.gatling.core.check.CheckContext.{ setAndReturnCheckContextAttribute, getCheckContextAttribute }
 import com.excilys.ebi.gatling.core.check.ExtractorFactory
-import com.excilys.ebi.gatling.core.session.Session
+import com.excilys.ebi.gatling.core.session.ResolvedString
 import com.excilys.ebi.gatling.http.check.body.HttpBodyCheckBuilder
 import com.excilys.ebi.gatling.vtd.check.extractor.VTDXPathExtractor
 import com.ning.http.client.Response
 object HttpBodyVTDXPathCheckBuilder {
 
-	def vtdXpath(expression: Session => String) = new HttpBodyCheckBuilder(findExtractorFactory, findAllExtractoryFactory, countExtractoryFactory, expression)
+	def vtdXpath(expression: ResolvedString) = new HttpBodyCheckBuilder(findExtractorFactory, findAllExtractoryFactory, countExtractoryFactory, expression)
 
 	private val HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY = "HttpBodyVTDXPathExtractor"
 
