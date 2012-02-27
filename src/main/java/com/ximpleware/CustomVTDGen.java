@@ -17,6 +17,8 @@
  */
 package com.ximpleware;
 
+import static com.excilys.ebi.gatling.core.util.HtmlHelper.htmlEntityToChar;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +30,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 
@@ -83,8 +84,6 @@ public class CustomVTDGen extends VTDGen {
 	private boolean must_utf_8;
 
 	private int temp_offset;
-
-	private static final ResourceBundle ENTITIES = ResourceBundle.getBundle("com/ximpleware/entities");
 
 	/**
 	 * VTDGen constructor method.
@@ -283,8 +282,7 @@ public class CustomVTDGen extends VTDGen {
 			}
 
 			try {
-				String valString = ENTITIES.getString(builder.toString());
-				return Integer.valueOf(valString);
+				return htmlEntityToChar(builder.toString());
 
 			} catch (MissingResourceException e) {
 				throw new EntityException("unknown entity" + builder.toString());
