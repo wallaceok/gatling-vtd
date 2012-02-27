@@ -18,13 +18,13 @@
 package com.excilys.ebi.gatling.vtd.http.check.body
 import com.excilys.ebi.gatling.core.check.CheckContext.{ setAndReturnCheckContextAttribute, getCheckContextAttribute }
 import com.excilys.ebi.gatling.core.check.ExtractorFactory
-import com.excilys.ebi.gatling.core.session.ResolvedString
+import com.excilys.ebi.gatling.core.session.EvaluatableString
 import com.excilys.ebi.gatling.http.check.body.HttpBodyCheckBuilder
 import com.excilys.ebi.gatling.vtd.check.extractor.VTDXPathExtractor
 import com.ning.http.client.Response
 object HttpBodyVTDXPathCheckBuilder {
 
-	def vtdXpath(expression: ResolvedString) = new HttpBodyCheckBuilder(findExtractorFactory, findAllExtractoryFactory, countExtractoryFactory, expression)
+	def vtdXpath(expression: EvaluatableString) = new HttpBodyCheckBuilder(findExtractorFactory, findAllExtractorFactory, countExtractorFactory, expression)
 
 	private val HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY = "HttpBodyVTDXPathExtractor"
 
@@ -33,6 +33,6 @@ object HttpBodyVTDXPathCheckBuilder {
 	}
 
 	private def findExtractorFactory(occurrence: Int): ExtractorFactory[Response, String] = (response: Response) => getCachedExtractor(response).extractOne(occurrence)
-	private val findAllExtractoryFactory: ExtractorFactory[Response, Seq[String]] = (response: Response) => getCachedExtractor(response).extractMultiple
-	private val countExtractoryFactory: ExtractorFactory[Response, Int] = (response: Response) => getCachedExtractor(response).count
+	private val findAllExtractorFactory: ExtractorFactory[Response, Seq[String]] = (response: Response) => getCachedExtractor(response).extractMultiple
+	private val countExtractorFactory: ExtractorFactory[Response, Int] = (response: Response) => getCachedExtractor(response).count
 }
