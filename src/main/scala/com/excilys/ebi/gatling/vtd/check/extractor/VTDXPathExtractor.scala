@@ -51,15 +51,15 @@ class VTDXPathExtractor(bytes: Array[Byte]) {
 		}
 	}
 
-	private def xpath[X](expression: String)(f: => X) = {
+	private def xpath[X](expression: String)(f: () => X) : X = {
 		ap.selectXPath(expression)
-		val values = f
+		val values = f()
 		ap.resetXPath
 		values
 	}
 
 	def extractOne(occurrence: Int)(expression: String): Option[String] = {
-		xpath(expression) {
+		xpath(expression) { () =>
 			var count = 0
 			var index = -1
 			do {
@@ -80,7 +80,7 @@ class VTDXPathExtractor(bytes: Array[Byte]) {
 	}
 
 	def extractMultiple(expression: String): Option[Seq[String]] = {
-		xpath(expression) {
+		xpath(expression) { () =>
 			var index = -1
 			var values: List[String] = Nil
 			do {
