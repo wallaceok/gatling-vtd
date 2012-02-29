@@ -21,6 +21,7 @@ import com.excilys.ebi.gatling.core.check.extractor.Extractor.{ toOption, seqToO
 import com.excilys.ebi.gatling.core.util.StringHelper.EMPTY
 import com.ximpleware.VTDNav.{ TOKEN_STARTING_TAG, TOKEN_PI_VAL, TOKEN_PI_NAME, TOKEN_ATTR_NAME }
 import com.ximpleware.{ VTDNav, CustomVTDGen, AutoPilot }
+import scala.annotation.tailrec
 
 /**
  * VTD-XML based XPath Extractor.
@@ -51,7 +52,7 @@ class VTDXPathExtractor(bytes: Array[Byte]) {
 		}
 	}
 
-	private def xpath[X](expression: String)(f: () => X) : X = {
+	private def xpath[X](expression: String)(f: () => X): X = {
 		ap.selectXPath(expression)
 		val values = f()
 		ap.resetXPath
@@ -59,43 +60,41 @@ class VTDXPathExtractor(bytes: Array[Byte]) {
 	}
 
 	def extractOne(occurrence: Int)(expression: String): Option[String] = {
-		xpath(expression) { () =>
-			var count = 0
-			var index = -1
-			do {
-				index = ap.evalXPath
-				count += 1
 
-				if (index != -1) {
-					index = getTextIndex(index, vn)
-				}
-			} while (count < occurrence && index != -1)
-
-			if (count < occurrence || index == -1) {
+		@tailrec
+		def extractOneRec(occurrence: Int): Option[String] = {
+			val index = ap.evalXPath
+			if (index == -1)
 				None
-			} else {
-				vn.toString(index)
-			}
+			else if (occurrence == 0) {
+				val textIndex = getTextIndex(index, vn)
+				if (textIndex == -1)
+					None
+				else
+					vn.toString(textIndex)
+			} else
+				extractOneRec(occurrence - 1)
 		}
+
+		xpath(expression) { () => extractOneRec(occurrence) }
 	}
 
 	def extractMultiple(expression: String): Option[Seq[String]] = {
-		xpath(expression) { () =>
-			var index = -1
-			var values: List[String] = Nil
-			do {
-				index = ap.evalXPath
 
-				if (index != -1) {
-					index = getTextIndex(index, vn)
-
-					val result = vn.toString(index)
-					if (!result.equals(EMPTY))
-						values = result :: values
-				}
-			} while (index != -1)
-			values
+		@tailrec
+		def extractMultipleRec(results: List[String]): List[String] = {
+			val index = ap.evalXPath
+			if (index == -1)
+				results
+			else {
+				val textIndex = getTextIndex(index, vn)
+				val result = if (textIndex != -1) vn.toString(textIndex) else EMPTY
+				val newResults = if (result != EMPTY) result :: results else results
+				extractMultipleRec(newResults)
+			}
 		}
+
+		xpath(expression) { () => extractMultipleRec(Nil) }
 	}
 
 	def count(expression: String): Option[Int] = extractMultiple(expression).getOrElse(Nil).size
