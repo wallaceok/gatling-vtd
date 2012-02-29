@@ -68,10 +68,7 @@ class VTDXPathExtractor(bytes: Array[Byte]) {
 				None
 			else if (occurrence == 0) {
 				val textIndex = getTextIndex(index, vn)
-				if (textIndex == -1)
-					None
-				else
-					vn.toString(textIndex)
+				if (textIndex != -1) vn.toString(textIndex) else None
 			} else
 				extractOneRec(occurrence - 1)
 		}
