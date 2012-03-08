@@ -31,6 +31,8 @@ object HttpBodyVTDXPathCheckBuilder {
 	private def getCachedExtractor(response: Response) = getOrUpdateCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, () => new VTDXPathExtractor(response.getResponseBodyAsBytes))
 
 	private def findExtractorFactory(occurrence: Int): ExtractorFactory[Response, String] = (response: Response) => getCachedExtractor(response).extractOne(occurrence)
+
 	private val findAllExtractorFactory: ExtractorFactory[Response, Seq[String]] = (response: Response) => getCachedExtractor(response).extractMultiple
+
 	private val countExtractorFactory: ExtractorFactory[Response, Int] = (response: Response) => getCachedExtractor(response).count
 }
