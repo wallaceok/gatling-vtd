@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
-import com.excilys.ebi.gatling.core.check.CheckContext.{ setCheckContextAttribute, getCheckContextAttribute }
+import com.excilys.ebi.gatling.core.check.CheckContext.getOrUpdateCheckContextAttribute
 import com.excilys.ebi.gatling.core.check.ExtractorFactory
 import com.excilys.ebi.gatling.core.session.EvaluatableString
 import com.excilys.ebi.gatling.http.check.body.HttpBodyCheckBuilder
@@ -28,9 +28,7 @@ object HttpBodyVTDXPathCheckBuilder {
 
 	private val HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY = "HttpBodyVTDXPathExtractor"
 
-	private def getCachedExtractor(response: Response) = getCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY).getOrElse {
-		setCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, new VTDXPathExtractor(response.getResponseBodyAsBytes))
-	}
+	private def getCachedExtractor(response: Response) = getOrUpdateCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, () => new VTDXPathExtractor(response.getResponseBodyAsBytes))
 
 	private def findExtractorFactory(occurrence: Int): ExtractorFactory[Response, String] = (response: Response) => getCachedExtractor(response).extractOne(occurrence)
 	private val findAllExtractorFactory: ExtractorFactory[Response, Seq[String]] = (response: Response) => getCachedExtractor(response).extractMultiple
