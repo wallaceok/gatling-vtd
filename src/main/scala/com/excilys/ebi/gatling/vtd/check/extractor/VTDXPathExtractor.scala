@@ -52,12 +52,12 @@ class VtdXPathExtractor(bytes: Array[Byte]) {
 		}
 	}
 
-	private def useXpath[X](expression: String, namespaces: List[(String, String)])(f: () => X): X = {
+	private def useXpath[X](expression: String, namespaces: List[(String, String)])(f: => X): X = {
 		namespaces.foreach {
 			case (prefix, uri) => ap.declareXPathNameSpace(prefix, uri)
 		}
 		ap.selectXPath(expression)
-		val values = f()
+		val values = f
 		ap.resetXPath
 		values
 	}
@@ -76,7 +76,7 @@ class VtdXPathExtractor(bytes: Array[Byte]) {
 				extractOneRec(occurrence - 1)
 		}
 
-		useXpath(expression, namespaces) { () => extractOneRec(occurrence) }
+		useXpath(expression, namespaces) { extractOneRec(occurrence) }
 	}
 
 	def extractMultiple(namespaces: List[(String, String)])(expression: String): Option[Seq[String]] = {
@@ -94,7 +94,7 @@ class VtdXPathExtractor(bytes: Array[Byte]) {
 			}
 		}
 
-		useXpath(expression, namespaces) { () => extractMultipleRec(Nil) }
+		useXpath(expression, namespaces) { extractMultipleRec(Nil) }
 	}
 
 	def count(namespaces: List[(String, String)])(expression: String): Option[Int] = extractMultiple(namespaces)(expression).getOrElse(Nil).size
