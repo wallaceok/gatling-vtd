@@ -44,9 +44,9 @@ class VtdXPathExtractor(bytes: Array[Byte]) {
 			case TOKEN_STARTING_TAG => vn.getText
 			case TOKEN_PI_NAME => {
 				if (index + 1 < vn.getTokenCount && vn.getTokenType(index + 1) == TOKEN_PI_VAL)
-					index + 1;
+					index + 1
 				else
-					index - 1;
+					index - 1
 			}
 			case x => throw new IllegalArgumentException("Unknown token type " + x)
 		}
