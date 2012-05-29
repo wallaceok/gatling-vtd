@@ -16,12 +16,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
+
 import com.excilys.ebi.gatling.core.check.CheckContext.getOrUpdateCheckContextAttribute
 import com.excilys.ebi.gatling.core.check.ExtractorFactory
 import com.excilys.ebi.gatling.core.session.EvaluatableString
 import com.excilys.ebi.gatling.http.check.body.HttpBodyCheckBuilder
 import com.excilys.ebi.gatling.vtd.check.extractor.VtdXPathExtractor
 import com.ning.http.client.Response
+
 object HttpBodyVtdXPathCheckBuilder {
 
 	def vtdXpath(expression: EvaluatableString, namespaces: List[(String, String)]) = new HttpBodyCheckBuilder(findExtractorFactory(namespaces), findAllExtractorFactory(namespaces), countExtractorFactory(namespaces), expression)
