@@ -65,7 +65,6 @@
 		<vtd.version>2.10</vtd.version>
 
 		<maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
-		<maven-assembly-plugin.version>2.3</maven-assembly-plugin.version>
 		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
 		<scala-maven-plugin.version>3.0.2</scala-maven-plugin.version>
 		<maven-surefire-plugin.version>2.12</maven-surefire-plugin.version>
@@ -158,6 +157,7 @@
 					<version>${maven-license-plugin.version}</version>
 					<configuration>
 						<header>src/etc/header.txt</header>
+						<strictCheck>false</strictCheck>
 						<excludes>
 							<exclude>**/imports.txt</exclude>
 						</excludes>
