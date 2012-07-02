@@ -20,21 +20,22 @@ package com.excilys.ebi.gatling.vtd.http.check.body
 import com.excilys.ebi.gatling.core.check.CheckContext.getOrUpdateCheckContextAttribute
 import com.excilys.ebi.gatling.core.check.ExtractorFactory
 import com.excilys.ebi.gatling.core.session.EvaluatableString
-import com.excilys.ebi.gatling.http.check.body.HttpBodyCheckBuilder
+import com.excilys.ebi.gatling.http.check.HttpMultipleCheckBuilder
+import com.excilys.ebi.gatling.http.request.HttpPhase.CompletePageReceived
+import com.excilys.ebi.gatling.http.response.ExtendedResponse
 import com.excilys.ebi.gatling.vtd.check.extractor.VtdXPathExtractor
-import com.ning.http.client.Response
 
 object HttpBodyVtdXPathCheckBuilder {
 
-	def vtdXpath(expression: EvaluatableString, namespaces: List[(String, String)]) = new HttpBodyCheckBuilder(findExtractorFactory(namespaces), findAllExtractorFactory(namespaces), countExtractorFactory(namespaces), expression)
-
 	private val HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY = "HttpBodyVtdXPathExtractor"
 
-	private def getCachedExtractor(response: Response) = getOrUpdateCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, new VtdXPathExtractor(response.getResponseBodyAsBytes))
+	private def getCachedExtractor(ExtendedResponse: ExtendedResponse) = getOrUpdateCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, new VtdXPathExtractor(ExtendedResponse.getResponseBodyAsBytes))
 
-	private def findExtractorFactory(namespaces: List[(String, String)])(occurrence: Int): ExtractorFactory[Response, String] = (response: Response) => getCachedExtractor(response).extractOne(occurrence, namespaces)
+	private def findExtractorFactory(namespaces: List[(String, String)])(occurrence: Int): ExtractorFactory[ExtendedResponse, String, String] = (ExtendedResponse: ExtendedResponse) => getCachedExtractor(ExtendedResponse).extractOne(occurrence, namespaces)
 
-	private def findAllExtractorFactory(namespaces: List[(String, String)]): ExtractorFactory[Response, Seq[String]] = (response: Response) => getCachedExtractor(response).extractMultiple(namespaces)
+	private def findAllExtractorFactory(namespaces: List[(String, String)]): ExtractorFactory[ExtendedResponse, String, Seq[String]] = (ExtendedResponse: ExtendedResponse) => getCachedExtractor(ExtendedResponse).extractMultiple(namespaces)
 
-	private def countExtractorFactory(namespaces: List[(String, String)]): ExtractorFactory[Response, Int] = (response: Response) => getCachedExtractor(response).count(namespaces)
+	private def countExtractorFactory(namespaces: List[(String, String)]): ExtractorFactory[ExtendedResponse, String, Int] = (ExtendedResponse: ExtendedResponse) => getCachedExtractor(ExtendedResponse).count(namespaces)
+
+	def vtdXpath(expression: EvaluatableString, namespaces: List[(String, String)]) = new HttpMultipleCheckBuilder(findExtractorFactory(namespaces), findAllExtractorFactory(namespaces), countExtractorFactory(namespaces), expression, CompletePageReceived)
 }
