@@ -17,7 +17,7 @@
  */
 package com.ximpleware;
 
-import static com.excilys.ebi.gatling.core.util.HtmlHelper.htmlEntityToChar;
+import com.excilys.ebi.gatling.core.util.HtmlHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -282,7 +282,7 @@ public class CustomVTDGen extends VTDGen {
 			}
 
 			try {
-				return htmlEntityToChar(builder.toString());
+				return HtmlHelper.htmlEntityToChar(builder.toString(), 0);
 
 			} catch (MissingResourceException e) {
 				throw new EntityException("unknown entity" + builder.toString());
