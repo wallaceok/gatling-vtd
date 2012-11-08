@@ -282,7 +282,7 @@ public class CustomVTDGen extends VTDGen {
 			}
 
 			try {
-				return HtmlHelper.htmlEntityToChar(builder.toString(), 0);
+				return HtmlHelper.htmlEntityToInt(builder.toString(), 0);
 
 			} catch (MissingResourceException e) {
 				throw new EntityException("unknown entity" + builder.toString());
