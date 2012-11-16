@@ -19,8 +19,7 @@ package com.excilys.ebi.gatling.vtd.check.extractor
 
 import scala.annotation.tailrec
 
-import com.excilys.ebi.gatling.core.check.extractor.Extractor.{ toOption, seqToOption }
-import com.excilys.ebi.gatling.core.util.StringHelper.EMPTY
+import com.excilys.ebi.gatling.core.check.extractor.Extractor
 import com.ximpleware.VTDNav.{ TOKEN_STARTING_TAG, TOKEN_PI_VAL, TOKEN_PI_NAME, TOKEN_ATTR_NAME }
 import com.ximpleware.{ VTDNav, CustomVTDGen, AutoPilot }
 
@@ -31,7 +30,7 @@ import com.ximpleware.{ VTDNav, CustomVTDGen, AutoPilot }
  *
  * @author <a href="mailto:slandelle@excilys.com">Stephane Landelle</a>
  */
-class VtdXPathExtractor(bytes: Array[Byte]) {
+class VtdXPathExtractor(bytes: Array[Byte]) extends Extractor {
 
 	val vtdEngine = new CustomVTDGen
 	vtdEngine.setDoc(bytes)
@@ -89,8 +88,8 @@ class VtdXPathExtractor(bytes: Array[Byte]) {
 				results
 			else {
 				val textIndex = getTextIndex(index, vn)
-				val result = if (textIndex != -1) vn.toString(textIndex) else EMPTY
-				val newResults = if (result != EMPTY) result :: results else results
+				val result = if (textIndex != -1) vn.toString(textIndex) else ""
+				val newResults = if (!result.isEmpty) result :: results else results
 				extractMultipleRec(newResults)
 			}
 		}
