@@ -17,9 +17,9 @@
  */
 package com.excilys.ebi.gatling.vtd
 
-import com.excilys.ebi.gatling.core.session.EvaluatableString
+import com.excilys.ebi.gatling.core.session.Expression
 import com.excilys.ebi.gatling.vtd.http.check.body.HttpBodyVtdXPathCheckBuilder
 
 class Predef {
-	def vtdXpath(expression: EvaluatableString, namespaces: List[(String, String)] = Nil) = HttpBodyVtdXPathCheckBuilder.vtdXpath(expression, namespaces)
+	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)] = Nil) = HttpBodyVtdXPathCheckBuilder.vtdXpath(expression, namespaces)
 }

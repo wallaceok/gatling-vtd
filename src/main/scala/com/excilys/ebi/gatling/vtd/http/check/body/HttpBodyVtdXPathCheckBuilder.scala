@@ -17,25 +17,35 @@
  */
 package com.excilys.ebi.gatling.vtd.http.check.body
 
-import com.excilys.ebi.gatling.core.check.CheckContext.getOrUpdateCheckContextAttribute
-import com.excilys.ebi.gatling.core.check.ExtractorFactory
-import com.excilys.ebi.gatling.core.session.EvaluatableString
-import com.excilys.ebi.gatling.http.check.HttpMultipleCheckBuilder
-import com.excilys.ebi.gatling.http.request.HttpPhase.CompletePageReceived
+import com.excilys.ebi.gatling.core.check.Preparer
+import com.excilys.ebi.gatling.core.session.Expression
+import com.excilys.ebi.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
+import com.excilys.ebi.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
 import com.excilys.ebi.gatling.http.response.ExtendedResponse
-import com.excilys.ebi.gatling.vtd.check.extractor.VtdXPathExtractor
+import com.excilys.ebi.gatling.vtd.check.extractor.VtdXPathExtractors
+import com.ximpleware.{ AutoPilot, VTDNav }
 
-object HttpBodyVtdXPathCheckBuilder {
+import grizzled.slf4j.Logging
 
-	private val HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY = "HttpBodyVtdXPathExtractor"
+object HttpBodyVtdXPathCheckBuilder extends Logging {
 
-	private def getCachedExtractor(ExtendedResponse: ExtendedResponse) = getOrUpdateCheckContextAttribute(HTTP_BODY_VTD_XPATH_EXTRACTOR_CONTEXT_KEY, new VtdXPathExtractor(ExtendedResponse.getResponseBodyAsBytes))
+	private val preparer: Preparer[ExtendedResponse, Option[(VTDNav, AutoPilot)]] = (response: ExtendedResponse) =>
+		try {
+			val bytes = response.getResponseBodyAsBytes
+			Some(VtdXPathExtractors.parse(bytes)).success
 
-	private def findExtractorFactory(namespaces: List[(String, String)])(occurrence: Int): ExtractorFactory[ExtendedResponse, String, String] = (ExtendedResponse: ExtendedResponse) => getCachedExtractor(ExtendedResponse).extractOne(occurrence, namespaces)
+		} catch {
+			case e: Exception =>
+				val message = s"Could not parse response into a Jodd NodeSelector: ${e.getMessage}"
+				info(message, e)
+				message.failure
+		}
 
-	private def findAllExtractorFactory(namespaces: List[(String, String)]): ExtractorFactory[ExtendedResponse, String, Seq[String]] = (ExtendedResponse: ExtendedResponse) => getCachedExtractor(ExtendedResponse).extractMultiple(namespaces)
-
-	private def countExtractorFactory(namespaces: List[(String, String)]): ExtractorFactory[ExtendedResponse, String, Int] = (ExtendedResponse: ExtendedResponse) => getCachedExtractor(ExtendedResponse).count(namespaces)
-
-	def vtdXpath(expression: EvaluatableString, namespaces: List[(String, String)]) = new HttpMultipleCheckBuilder(findExtractorFactory(namespaces), findAllExtractorFactory(namespaces), countExtractorFactory(namespaces), expression, CompletePageReceived)
+	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) = new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String, String](
+		HttpCheckBuilders.bodyCheckFactory,
+		preparer,
+		VtdXPathExtractors.extractOne(namespaces),
+		VtdXPathExtractors.extractMultiple(namespaces),
+		VtdXPathExtractors.count(namespaces),
+		expression)
 }
