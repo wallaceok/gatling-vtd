@@ -20,6 +20,7 @@ package com.excilys.ebi.gatling.vtd.check.extractor
 import scala.annotation.tailrec
 
 import com.excilys.ebi.gatling.core.check.Extractor
+import com.excilys.ebi.gatling.core.check.extractor.Extractors.{ LiftedOption, LiftedSeqOption }
 import com.excilys.ebi.gatling.core.validation.{ SuccessWrapper, Validation }
 import com.ximpleware.{ AutoPilot, CustomVTDGen, VTDNav }
 import com.ximpleware.VTDNav.{ TOKEN_ATTR_NAME, TOKEN_PI_NAME, TOKEN_PI_VAL, TOKEN_STARTING_TAG }
@@ -73,7 +74,7 @@ object VtdXPathExtractors {
 					None
 				else if (occurrence == 0) {
 					val textIndex = getTextIndex(index, vn)
-					if (textIndex != -1) Some(vn.toString(textIndex)) else None
+					if (textIndex != -1) vn.toString(textIndex).liftOption else None
 				} else
 					extractOneRec(vn, ap, occurrence - 1)
 			}
@@ -106,7 +107,7 @@ object VtdXPathExtractors {
 
 			val result = for {
 				(vn, ap) <- prepared
-				result = useXpath(ap, criterion, namespaces) { extractMultipleRec(vn, ap, Nil) }
+				result <- useXpath(ap, criterion, namespaces) { extractMultipleRec(vn, ap, Nil) }.liftSeqOption
 			} yield result
 
 			result.success
