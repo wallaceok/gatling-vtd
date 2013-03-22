@@ -9,7 +9,7 @@ VTD-XML is a XPath 1.0 implementation that is much more faster than the standard
 ### When using the Gatling bundle
 
 Just drop the gatling-vtd-&lt;version&gt;.jar into the lib directory.
-You can find the suitable jar in the [download section](https://github.com/excilys/gatling-vtd/downloads).
+You can find the suitable jar [here](https://docs.google.com/file/d/0B1zTVlhQrNiyb0c5VTMzMFVfRlk/edit).
 
 ### When using maven Maven
 
