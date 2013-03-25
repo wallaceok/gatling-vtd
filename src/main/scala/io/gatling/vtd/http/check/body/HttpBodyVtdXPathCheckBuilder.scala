@@ -15,14 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package com.excilys.ebi.gatling.vtd.http.check.body
+package io.gatling.vtd.http.check.body
 
-import com.excilys.ebi.gatling.core.check.Preparer
-import com.excilys.ebi.gatling.core.session.Expression
-import com.excilys.ebi.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
-import com.excilys.ebi.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
-import com.excilys.ebi.gatling.http.response.ExtendedResponse
-import com.excilys.ebi.gatling.vtd.check.extractor.VtdXPathExtractors
+import io.gatling.core.check.Preparer
+import io.gatling.core.session.Expression
+import io.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
+import io.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
+import io.gatling.http.response.ExtendedResponse
+import io.gatling.vtd.check.extractor.VtdXPathExtractors
 import com.ximpleware.{ AutoPilot, VTDNav }
 
 import grizzled.slf4j.Logging

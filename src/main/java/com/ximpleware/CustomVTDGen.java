@@ -17,7 +17,7 @@
  */
 package com.ximpleware;
 
-import com.excilys.ebi.gatling.core.util.HtmlHelper;
+import io.gatling.core.util.HtmlHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

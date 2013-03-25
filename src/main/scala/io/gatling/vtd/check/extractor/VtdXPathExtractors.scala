@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package com.excilys.ebi.gatling.vtd.check.extractor
+package io.gatling.vtd.check.extractor
 
 import scala.annotation.tailrec
 
-import com.excilys.ebi.gatling.core.check.Extractor
-import com.excilys.ebi.gatling.core.check.extractor.Extractors.{ LiftedOption, LiftedSeqOption }
-import com.excilys.ebi.gatling.core.validation.{ SuccessWrapper, Validation }
+import io.gatling.core.check.Extractor
+import io.gatling.core.check.extractor.Extractors.{ LiftedOption, LiftedSeqOption }
+import io.gatling.core.validation.{ SuccessWrapper, Validation }
 import com.ximpleware.{ AutoPilot, CustomVTDGen, VTDNav }
 import com.ximpleware.VTDNav.{ TOKEN_ATTR_NAME, TOKEN_PI_NAME, TOKEN_PI_VAL, TOKEN_STARTING_TAG }
 

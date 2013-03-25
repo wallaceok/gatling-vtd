@@ -15,10 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-package com.excilys.ebi.gatling.vtd
+package io.gatling.vtd
 
-import com.excilys.ebi.gatling.core.session.Expression
-import com.excilys.ebi.gatling.vtd.http.check.body.HttpBodyVtdXPathCheckBuilder
+import io.gatling.core.session.Expression
+import io.gatling.vtd.http.check.body.HttpBodyVtdXPathCheckBuilder
 
 class Predef {
 	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)] = Nil) = HttpBodyVtdXPathCheckBuilder.vtdXpath(expression, namespaces)
