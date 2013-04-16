@@ -61,7 +61,7 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<encoding>UTF-8</encoding>
 
-		<gatling.version>2.0.0-M1</gatling.version>
+		<gatling.version>2.0.0-SNAPSHOT</gatling.version>
 		<vtd.version>2.11.1</vtd.version>
 
 		<maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
