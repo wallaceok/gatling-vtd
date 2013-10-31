@@ -25,27 +25,26 @@ import io.gatling.core.session.Expression
 import io.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
 import io.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
 import io.gatling.http.response.Response
-import io.gatling.vtd.check.extractor.VtdXPathExtractors
+import io.gatling.vtd.check.extractor.{ CountVtdXPathExtractor, MultipleVtdXPathExtractor, SingleVtdXPathExtractor, VtdXPathExtractor }
 
 object HttpBodyVtdXPathCheckBuilder extends Logging {
 
 	private val preparer: Preparer[Response, Option[(VTDNav, AutoPilot)]] = (response: Response) =>
 		try {
 			val bytes = response.getResponseBodyAsBytes
-			Some(VtdXPathExtractors.parse(bytes)).success
+			Some(VtdXPathExtractor.parse(bytes)).success
 
 		} catch {
 			case e: Exception =>
-				val message = s"Could not parse response into a Jodd NodeSelector: ${e.getMessage}"
+				val message = s"Could not parse response with VTD-XML: ${e.getMessage}"
 				logger.info(message, e)
 				message.failure
 		}
 
-	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) = new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String, String](
-		HttpCheckBuilders.bodyCheckFactory,
-		preparer,
-		VtdXPathExtractors.extractOne(namespaces),
-		VtdXPathExtractors.extractMultiple(namespaces),
-		VtdXPathExtractors.count(namespaces),
-		expression)
+	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) =
+		new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bodyCheckFactory, preparer) {
+			def findExtractor(occurrence: Int) = new SingleVtdXPathExtractor(expression, namespaces, occurrence)
+			def findAllExtractor = new MultipleVtdXPathExtractor(expression, namespaces)
+			def countExtractor = new CountVtdXPathExtractor(expression, namespaces)
+		}
 }
