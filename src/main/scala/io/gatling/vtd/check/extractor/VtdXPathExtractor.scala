@@ -22,8 +22,7 @@ import scala.annotation.tailrec
 import com.ximpleware.{ AutoPilot, CustomVTDGen, VTDNav }
 import com.ximpleware.VTDNav.{ TOKEN_ATTR_NAME, TOKEN_PI_NAME, TOKEN_PI_VAL, TOKEN_STARTING_TAG }
 
-import io.gatling.core.check.CriterionExtractor
-import io.gatling.core.check.extractor.Extractors.{ LiftedOption, LiftedSeqOption }
+import io.gatling.core.check.extractor.{ CriterionExtractor, LiftedOption, LiftedSeqOption }
 import io.gatling.core.session.Expression
 import io.gatling.core.validation.{ SuccessWrapper, Validation }
 
