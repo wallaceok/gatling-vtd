@@ -61,9 +61,7 @@ object VtdXPathExtractor {
 	}
 }
 
-abstract class VtdXPathExtractor[X] extends CriterionExtractor[Option[(VTDNav, AutoPilot)], String, X] {
-	val name = "vtd"
-}
+abstract class VtdXPathExtractor[X] extends CriterionExtractor[Option[(VTDNav, AutoPilot)], String, X] { val criterionName = "vtd" }
 
 class SingleVtdXPathExtractor(val criterion: Expression[String], namespaces: List[(String, String)], occurrence: Int) extends VtdXPathExtractor[String] {
 
