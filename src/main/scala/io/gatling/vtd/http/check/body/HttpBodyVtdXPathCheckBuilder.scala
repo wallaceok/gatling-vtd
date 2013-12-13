@@ -21,7 +21,7 @@ import com.typesafe.scalalogging.slf4j.Logging
 import com.ximpleware.{ AutoPilot, VTDNav }
 
 import io.gatling.core.check.Preparer
-import io.gatling.core.session.Expression
+import io.gatling.core.session.{ Expression, RichExpression }
 import io.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
 import io.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
 import io.gatling.http.response.Response
@@ -43,8 +43,8 @@ object HttpBodyVtdXPathCheckBuilder extends Logging {
 
 	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) =
 		new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bodyCheckFactory, preparer) {
-			def findExtractor(occurrence: Int) = new SingleVtdXPathExtractor(expression, namespaces, occurrence)
-			def findAllExtractor = new MultipleVtdXPathExtractor(expression, namespaces)
-			def countExtractor = new CountVtdXPathExtractor(expression, namespaces)
+			def findExtractor(occurrence: Int) = expression.map(new SingleVtdXPathExtractor(_, namespaces, occurrence))
+			def findAllExtractor = expression.map(new MultipleVtdXPathExtractor(_, namespaces))
+			def countExtractor = expression.map(new CountVtdXPathExtractor(_, namespaces))
 		}
 }

@@ -23,7 +23,6 @@ import com.ximpleware.{ AutoPilot, CustomVTDGen, VTDNav }
 import com.ximpleware.VTDNav.{ TOKEN_ATTR_NAME, TOKEN_PI_NAME, TOKEN_PI_VAL, TOKEN_STARTING_TAG }
 
 import io.gatling.core.check.extractor.{ CriterionExtractor, LiftedOption, LiftedSeqOption }
-import io.gatling.core.session.Expression
 import io.gatling.core.validation.{ SuccessWrapper, Validation }
 
 object VtdXPathExtractor {
@@ -63,9 +62,9 @@ object VtdXPathExtractor {
 
 abstract class VtdXPathExtractor[X] extends CriterionExtractor[Option[(VTDNav, AutoPilot)], String, X] { val criterionName = "vtd" }
 
-class SingleVtdXPathExtractor(val criterion: Expression[String], namespaces: List[(String, String)], occurrence: Int) extends VtdXPathExtractor[String] {
+class SingleVtdXPathExtractor(val criterion: String, namespaces: List[(String, String)], occurrence: Int) extends VtdXPathExtractor[String] {
 
-	def extract(prepared: Option[(VTDNav, AutoPilot)], criterion: String): Validation[Option[String]] = {
+	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[String]] = {
 
 		@tailrec
 		def extractOneRec(vn: VTDNav, ap: AutoPilot, occurrence: Int): Option[String] = {
@@ -88,9 +87,9 @@ class SingleVtdXPathExtractor(val criterion: Expression[String], namespaces: Lis
 	}
 }
 
-class MultipleVtdXPathExtractor(val criterion: Expression[String], namespaces: List[(String, String)]) extends VtdXPathExtractor[Seq[String]] {
+class MultipleVtdXPathExtractor(val criterion: String, namespaces: List[(String, String)]) extends VtdXPathExtractor[Seq[String]] {
 
-	def extract(prepared: Option[(VTDNav, AutoPilot)], criterion: String): Validation[Option[Seq[String]]] = {
+	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[Seq[String]]] = {
 
 		@tailrec
 		def extractMultipleRec(vn: VTDNav, ap: AutoPilot, results: List[String]): List[String] = {
@@ -114,8 +113,8 @@ class MultipleVtdXPathExtractor(val criterion: Expression[String], namespaces: L
 	}
 }
 
-class CountVtdXPathExtractor(val criterion: Expression[String], namespaces: List[(String, String)]) extends VtdXPathExtractor[Int] {
+class CountVtdXPathExtractor(val criterion: String, namespaces: List[(String, String)]) extends VtdXPathExtractor[Int] {
 
-	def extract(prepared: Option[(VTDNav, AutoPilot)], criterion: String): Validation[Option[Int]] =
-		new MultipleVtdXPathExtractor(this.criterion, namespaces).extract(prepared, criterion).map(_.map(_.size))
+	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[Int]] =
+		new MultipleVtdXPathExtractor(this.criterion, namespaces).extract(prepared).map(_.map(_.size))
 }
