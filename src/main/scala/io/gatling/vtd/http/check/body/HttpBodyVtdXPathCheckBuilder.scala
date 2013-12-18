@@ -17,7 +17,7 @@
  */
 package io.gatling.vtd.http.check.body
 
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ximpleware.{ AutoPilot, VTDNav }
 
 import io.gatling.core.check.Preparer
@@ -27,7 +27,7 @@ import io.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
 import io.gatling.http.response.Response
 import io.gatling.vtd.check.extractor.{ CountVtdXPathExtractor, MultipleVtdXPathExtractor, SingleVtdXPathExtractor, VtdXPathExtractor }
 
-object HttpBodyVtdXPathCheckBuilder extends Logging {
+object HttpBodyVtdXPathCheckBuilder extends StrictLogging {
 
 	private val preparer: Preparer[Response, Option[(VTDNav, AutoPilot)]] = (response: Response) =>
 		try {
