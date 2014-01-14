@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 eBusiness Information, Groupe Excilys (www.excilys.com)
+ * Copyright 2011-2014 eBusiness Information, Groupe Excilys (www.excilys.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import scala.annotation.tailrec
 import com.ximpleware.{ AutoPilot, CustomVTDGen, VTDNav }
 import com.ximpleware.VTDNav.{ TOKEN_ATTR_NAME, TOKEN_PI_NAME, TOKEN_PI_VAL, TOKEN_STARTING_TAG }
 
-import io.gatling.core.check.extractor.{ CriterionExtractor, LiftedOption, LiftedSeqOption }
+import io.gatling.core.check.extractor.{ CriterionExtractor, LiftedSeqOption }
 import io.gatling.core.validation.{ SuccessWrapper, Validation }
 
 object VtdXPathExtractor {
@@ -58,6 +58,24 @@ object VtdXPathExtractor {
 			case x => throw new IllegalArgumentException("Unknown token type " + x)
 		}
 	}
+
+	def extractAll(criterion: String, namespaces: List[(String, String)], vn: VTDNav, ap: AutoPilot): Seq[String] = {
+
+		@tailrec
+		def extractAllRec(vn: VTDNav, ap: AutoPilot, results: List[String]): List[String] = {
+			val index = ap.evalXPath
+			if (index == -1)
+				results
+			else {
+				val textIndex = VtdXPathExtractor.getTextIndex(index, vn)
+				val result = if (textIndex != -1) vn.toString(textIndex) else ""
+				val newResults = if (!result.isEmpty) result :: results else results
+				extractAllRec(vn, ap, newResults)
+			}
+		}
+
+		useXpath(ap, criterion, namespaces) { extractAllRec(vn, ap, Nil) }
+	}
 }
 
 abstract class VtdXPathExtractor[X] extends CriterionExtractor[Option[(VTDNav, AutoPilot)], String, X] { val criterionName = "vtd" }
@@ -73,7 +91,7 @@ class SingleVtdXPathExtractor(val criterion: String, namespaces: List[(String, S
 				None
 			else if (occurrence == 0) {
 				val textIndex = VtdXPathExtractor.getTextIndex(index, vn)
-				if (textIndex != -1) vn.toString(textIndex).liftOption else None
+				if (textIndex != -1) Some(vn.toString(textIndex)) else None
 			} else
 				extractOneRec(vn, ap, occurrence - 1)
 		}
@@ -91,22 +109,9 @@ class MultipleVtdXPathExtractor(val criterion: String, namespaces: List[(String,
 
 	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[Seq[String]]] = {
 
-		@tailrec
-		def extractMultipleRec(vn: VTDNav, ap: AutoPilot, results: List[String]): List[String] = {
-			val index = ap.evalXPath
-			if (index == -1)
-				results
-			else {
-				val textIndex = VtdXPathExtractor.getTextIndex(index, vn)
-				val result = if (textIndex != -1) vn.toString(textIndex) else ""
-				val newResults = if (!result.isEmpty) result :: results else results
-				extractMultipleRec(vn, ap, newResults)
-			}
-		}
-
 		val result = for {
 			(vn, ap) <- prepared
-			result <- VtdXPathExtractor.useXpath(ap, criterion, namespaces) { extractMultipleRec(vn, ap, Nil) }.liftSeqOption
+			result <- VtdXPathExtractor.extractAll(criterion, namespaces, vn, ap).liftSeqOption
 		} yield result
 
 		result.success
@@ -115,6 +120,8 @@ class MultipleVtdXPathExtractor(val criterion: String, namespaces: List[(String,
 
 class CountVtdXPathExtractor(val criterion: String, namespaces: List[(String, String)]) extends VtdXPathExtractor[Int] {
 
-	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[Int]] =
-		new MultipleVtdXPathExtractor(this.criterion, namespaces).extract(prepared).map(_.map(_.size))
+	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[Int]] = {
+		val count = prepared.map{case (vn, ap) => VtdXPathExtractor.extractAll(criterion, namespaces, vn, ap).size}.getOrElse(0)
+		Some(count).success
+	}
 }
