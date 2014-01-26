@@ -31,7 +31,7 @@ object HttpBodyVtdXPathCheckBuilder extends StrictLogging {
 
 	private val preparer: Preparer[Response, Option[(VTDNav, AutoPilot)]] = (response: Response) =>
 		try {
-			val bytes = response.getResponseBodyAsBytes
+			val bytes = response.bodyBytes
 			Some(VtdXPathExtractor.parse(bytes)).success
 
 		} catch {
