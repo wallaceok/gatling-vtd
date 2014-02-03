@@ -31,7 +31,7 @@ object HttpBodyVtdXPathCheckBuilder extends StrictLogging {
 
 	private val preparer: Preparer[Response, Option[(VTDNav, AutoPilot)]] = (response: Response) =>
 		try {
-			val bytes = response.bodyBytes
+			val bytes = response.body.bytes
 			Some(VtdXPathExtractor.parse(bytes)).success
 
 		} catch {
@@ -42,7 +42,7 @@ object HttpBodyVtdXPathCheckBuilder extends StrictLogging {
 		}
 
 	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) =
-		new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bodyCheckFactory, preparer) {
+		new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bytesBodyCheckFactory, preparer) {
 			def findExtractor(occurrence: Int) = expression.map(new SingleVtdXPathExtractor(_, namespaces, occurrence))
 			def findAllExtractor = expression.map(new MultipleVtdXPathExtractor(_, namespaces))
 			def countExtractor = expression.map(new CountVtdXPathExtractor(_, namespaces))
