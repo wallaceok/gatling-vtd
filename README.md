@@ -1,17 +1,20 @@
-# Motivation
+Gatling VTD [![Build Status](https://travis-ci.org/excilys/gatling-vtd.png?branch=master)](https://travis-ci.org/excilys/gatling-vtd)
+===========
+
+## Motivation
 gatling-vtd is an extension for the [Gatling](https://github.com/excilys/gatling) stress tool that provides XPath extraction based on [VTD-XML](http://vtd-xml.sourceforge.net).
 
 VTD-XML is a XPath 1.0 implementation that is much more faster than the standard one.
 
-# Usage
+## Usage
 
-## Step 1 : adding the dependency
-### When using the Gatling bundle
+### Step 1 : adding the dependency
+#### When using the Gatling bundle
 
 Just drop the gatling-vtd-&lt;version&gt;.jar into the lib directory.
 You can find the suitable jar [here](http://goo.gl/6KdrK).
 
-### When using maven Maven
+#### When using maven Maven
 
 Use the following in you pom.xml :
 
@@ -30,7 +33,7 @@ Use the following in you pom.xml :
 </dependencies>
 ```
 
-## Step 2 : using in the scripts
+### Step 2 : using in the scripts
 
 If you use the txt format, the required imports are automatically registered.
 If you use the scala format, add the following import :
@@ -41,7 +44,7 @@ This will let you use the new extractor builtins. The syntax is similar to the s
 
     check(vtdXpath("//input[@id='text1']/@value") saveAs "aaaa_value")
 
-# Important notice : licence
+## Important notice : licence
 
 VTD-XML use a dual GPLv2/commercial licence.
 
