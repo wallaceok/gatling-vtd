@@ -121,7 +121,7 @@ class MultipleVtdXPathExtractor(val criterion: String, namespaces: List[(String,
 class CountVtdXPathExtractor(val criterion: String, namespaces: List[(String, String)]) extends VtdXPathExtractor[Int] {
 
 	def extract(prepared: Option[(VTDNav, AutoPilot)]): Validation[Option[Int]] = {
-		val count = prepared.map{case (vn, ap) => VtdXPathExtractor.extractAll(criterion, namespaces, vn, ap).size}.getOrElse(0)
+		val count = prepared.map { case (vn, ap) => VtdXPathExtractor.extractAll(criterion, namespaces, vn, ap).size }.getOrElse(0)
 		Some(count).success
 	}
 }
