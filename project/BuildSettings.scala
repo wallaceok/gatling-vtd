@@ -16,7 +16,7 @@ object BuildSettings {
 		startYear            := Some(2011),
 		licenses             := Seq("GPLv2" -> new URL("http://www.gnu.org/licenses/gpl-2.0.html")),
 		resolvers            := Seq(if(isSnapshot.value) sonatypeSnapshots else sonatypeReleases),
-		scalaVersion         := "2.10.4-RC3",
+		scalaVersion         := "2.10.4",
 		scalacOptions        := Seq(
 			"-encoding",
 			"UTF-8",
