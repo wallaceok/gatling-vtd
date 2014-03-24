@@ -29,22 +29,22 @@ import io.gatling.vtd.check.extractor.{ CountVtdXPathExtractor, MultipleVtdXPath
 
 object HttpBodyVtdXPathCheckBuilder extends StrictLogging {
 
-	private val preparer: Preparer[Response, Option[(VTDNav, AutoPilot)]] = (response: Response) =>
-		try {
-			val bytes = response.body.bytes
-			Some(VtdXPathExtractor.parse(bytes)).success
+  private val preparer: Preparer[Response, Option[(VTDNav, AutoPilot)]] = (response: Response) =>
+    try {
+      val bytes = response.body.bytes
+      Some(VtdXPathExtractor.parse(bytes)).success
 
-		} catch {
-			case e: Exception =>
-				val message = s"Could not parse response with VTD-XML: ${e.getMessage}"
-				logger.info(message, e)
-				message.failure
-		}
+    } catch {
+      case e: Exception =>
+        val message = s"Could not parse response with VTD-XML: ${e.getMessage}"
+        logger.info(message, e)
+        message.failure
+    }
 
-	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) =
-		new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bytesBodyCheckFactory, preparer) {
-			def findExtractor(occurrence: Int) = expression.map(new SingleVtdXPathExtractor(_, namespaces, occurrence))
-			def findAllExtractor = expression.map(new MultipleVtdXPathExtractor(_, namespaces))
-			def countExtractor = expression.map(new CountVtdXPathExtractor(_, namespaces))
-		}
+  def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) =
+    new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bytesBodyCheckFactory, preparer) {
+      def findExtractor(occurrence: Int) = expression.map(new SingleVtdXPathExtractor(_, namespaces, occurrence))
+      def findAllExtractor = expression.map(new MultipleVtdXPathExtractor(_, namespaces))
+      def countExtractor = expression.map(new CountVtdXPathExtractor(_, namespaces))
+    }
 }

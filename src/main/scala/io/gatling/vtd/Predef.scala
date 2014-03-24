@@ -21,5 +21,5 @@ import io.gatling.core.session.Expression
 import io.gatling.vtd.http.check.body.HttpBodyVtdXPathCheckBuilder
 
 class Predef {
-	def vtdXpath(expression: Expression[String], namespaces: List[(String, String)] = Nil) = HttpBodyVtdXPathCheckBuilder.vtdXpath(expression, namespaces)
+  def vtdXpath(expression: Expression[String], namespaces: List[(String, String)] = Nil) = HttpBodyVtdXPathCheckBuilder.vtdXpath(expression, namespaces)
 }
