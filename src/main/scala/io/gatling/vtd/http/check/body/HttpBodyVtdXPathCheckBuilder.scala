@@ -20,10 +20,10 @@ package io.gatling.vtd.http.check.body
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ximpleware.{ AutoPilot, VTDNav }
 
-import io.gatling.core.check.Preparer
+import io.gatling.core.check.{DefaultMultipleFindCheckBuilder, Preparer}
 import io.gatling.core.session.{ Expression, RichExpression }
 import io.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
-import io.gatling.http.check.{ HttpCheckBuilders, HttpMultipleCheckBuilder }
+import io.gatling.http.check.{HttpCheck, HttpCheckBuilders}
 import io.gatling.http.response.Response
 import io.gatling.vtd.check.extractor.{ CountVtdXPathExtractor, MultipleVtdXPathExtractor, SingleVtdXPathExtractor, VtdXPathExtractor }
 
@@ -42,7 +42,7 @@ object HttpBodyVtdXPathCheckBuilder extends StrictLogging {
     }
 
   def vtdXpath(expression: Expression[String], namespaces: List[(String, String)]) =
-    new HttpMultipleCheckBuilder[Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bytesBodyCheckFactory, preparer) {
+    new DefaultMultipleFindCheckBuilder[HttpCheck, Response, Option[(VTDNav, AutoPilot)], String](HttpCheckBuilders.bytesBodyCheckFactory, preparer) {
       def findExtractor(occurrence: Int) = expression.map(new SingleVtdXPathExtractor(_, namespaces, occurrence))
       def findAllExtractor = expression.map(new MultipleVtdXPathExtractor(_, namespaces))
       def countExtractor = expression.map(new CountVtdXPathExtractor(_, namespaces))

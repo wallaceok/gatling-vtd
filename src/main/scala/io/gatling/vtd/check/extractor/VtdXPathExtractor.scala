@@ -41,7 +41,7 @@ object VtdXPathExtractor {
     }
     ap.selectXPath(expression)
     val values = f
-    ap.resetXPath
+    ap.resetXPath()
     values
   }
 
@@ -49,12 +49,11 @@ object VtdXPathExtractor {
     vn.getTokenType(index) match {
       case TOKEN_ATTR_NAME    => index + 1
       case TOKEN_STARTING_TAG => vn.getText
-      case TOKEN_PI_NAME => {
+      case TOKEN_PI_NAME =>
         if (index + 1 < vn.getTokenCount && vn.getTokenType(index + 1) == TOKEN_PI_VAL)
           index + 1
         else
           index - 1
-      }
       case x => throw new IllegalArgumentException("Unknown token type " + x)
     }
   }
