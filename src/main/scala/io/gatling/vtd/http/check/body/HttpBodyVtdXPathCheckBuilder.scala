@@ -20,10 +20,10 @@ package io.gatling.vtd.http.check.body
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ximpleware.{ AutoPilot, VTDNav }
 
-import io.gatling.core.check.{DefaultMultipleFindCheckBuilder, Preparer}
+import io.gatling.core.check.{ DefaultMultipleFindCheckBuilder, Preparer }
 import io.gatling.core.session.{ Expression, RichExpression }
 import io.gatling.core.validation.{ FailureWrapper, SuccessWrapper }
-import io.gatling.http.check.{HttpCheck, HttpCheckBuilders}
+import io.gatling.http.check.{ HttpCheck, HttpCheckBuilders }
 import io.gatling.http.response.Response
 import io.gatling.vtd.check.extractor.{ CountVtdXPathExtractor, MultipleVtdXPathExtractor, SingleVtdXPathExtractor, VtdXPathExtractor }
 
